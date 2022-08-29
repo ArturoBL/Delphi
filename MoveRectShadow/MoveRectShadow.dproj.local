@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2020/11/05 09:28:48.000.646,=C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/11/12 11:36:20.000.716,=C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/11/13 16:21:10.000.493,=C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/11/13 17:07:17.000.555,=C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/11/13 17:24:13.000.980,=C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/11/24 18:43:58.000.060,=C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/11/24 18:44:41.000.494,C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\Desarrollo\Pruebas\MoveRectShadow\Unit1.dfm</Transaction>
+    <Transaction>2020/11/24 18:44:41.000.494,C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Desarrollo\Pruebas\MoveRectShadow\Unit1.pas</Transaction>
+    <Transaction>2020/11/24 18:44:47.000.955,C:\Users\ArturoBL\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Desarrollo\Pruebas\MoveRectShadow\MoveRectShadow.dproj</Transaction>
+    <Transaction>2020/11/24 18:54:06.000.656,=C:\Desarrollo\Pruebas\MoveRectShadow\Shadow.pas</Transaction>
+  </Transactions>
+</BorlandProject>

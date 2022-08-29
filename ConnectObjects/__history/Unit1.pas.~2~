@@ -1,0 +1,65 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GR32_Image,gr32, GR32_VectorUtils, GR32_polygons, GR32_Geometry, GR32_layers;
+
+type
+  TForm1 = class(TForm)
+    img: TImage32;
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    lo : TArrayOfArrayOfFloatPoint;
+    lp : array of tfloatpoint;
+    procedure calcpolys;
+    procedure draw;
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.calcpolys;
+var
+  i : integer;
+begin
+  for I := 0 to High(lo) do
+    lo[i] :=  RoundRect(floatRect(lp[i], floatpoint(lp[i].X + 100, lp[i].Y + 50)), 20);
+    //PolylineFS(img.Bitmap,Lo[i], clblack32, true);
+end;
+
+procedure TForm1.draw;
+var
+  i : integer;
+begin
+  Img.Bitmap.FillRectS(Img.Bitmap.BoundsRect, clWhite32);
+
+  PolylineFS(img.Bitmap,Lo[0], clblack32, true);
+  PolylineFS(img.Bitmap,Lo[1], clblack32, true);
+
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  i : integer;
+begin
+  img.Bitmap := tbitmap32.Create(img.Width, img.Height);
+
+  setlength(lp,2);
+  lp[0] := floatpoint(100, 100);
+  lp[1] := floatpoint(450, 300);
+
+  setlength(lo,high(lp)+1);
+  calcpolys;
+  draw;
+end;
+
+end.

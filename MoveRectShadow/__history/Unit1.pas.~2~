@@ -1,0 +1,95 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GR32_Image, gr32, jpeg, gr32_polygons, gr32_vectorutils, gr32_geometry, gr32_layers;
+
+type
+  TForm1 = class(TForm)
+    img: TImage32;
+    procedure FormCreate(Sender: TObject);
+    procedure imgMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    bk, sh : tbitmap32;
+    x,y : integer;
+    rr : tarrayoffloatpoint;
+    mp : tfloatpoint;
+    b : boolean;
+    function rectpoly(px,py : integer): tarrayoffloatpoint;
+    function getRect(px,py: integer): tfloatrect;
+    function getShadowRect : tfloatrect;
+    procedure draw;
+    procedure actualiza(np : tfloatpoint);
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+uses Shadow;
+
+procedure TForm1.actualiza(np: tfloatpoint);
+begin
+
+end;
+
+procedure TForm1.draw;
+begin
+  img.Bitmap.Draw(0,0,bk);
+
+  img.Bitmap.Draw(round(x - 20 + 10), round(y - 20 + 10),sh);
+  polygonfs(img.Bitmap,rr,clwhite32);
+  polylinefs(img.Bitmap,rr,clblack32,true,2);
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  bk := tbitmap32.Create;
+  bk.LoadFromFile('C:\Temp\penguins.jpg');
+  img.Bitmap := tbitmap32.Create(bk.Width, bk.Height);
+  x := 20; y := 20;
+  rr := rectpoly(x,y);
+
+  //el bitmap se genera una sola vez, el proceso de blur es tardado
+  sh := rrBMShadow(getrect(x,y),20,20,clblack32);
+  //img.Bitmap.Assign(bk);
+  draw;
+end;
+
+function TForm1.getRect(px,py: integer): tfloatrect;
+begin
+  result := floatRect(px, py, px + 250, py + 150);
+end;
+
+function TForm1.getShadowRect: tfloatrect;
+begin
+
+end;
+
+procedure TForm1.imgMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+begin
+  mp := floatpoint(x,y);
+
+
+  b := PointInPolygon(mp,rectpoly(x,y));
+  if b then
+    showmessage('as');
+  draw;
+end;
+
+function TForm1.rectpoly(px,py : integer): tarrayoffloatpoint;
+begin
+  result := RoundRect(getrect(px,py),20);
+end;
+
+end.
