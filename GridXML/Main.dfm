@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 362
-  Top = 194
+  Left = 354
+  Top = 195
   Width = 1370
   Height = 739
   Caption = 'Grid2XML'
@@ -82,7 +82,7 @@ object frmMain: TfrmMain
     FontSmoothing = fsmNone
   end
   object Button1: TButton
-    Left = 680
+    Left = 768
     Top = 8
     Width = 97
     Height = 25
@@ -112,18 +112,46 @@ object frmMain: TfrmMain
     Top = 400
     Width = 137
     Height = 25
-    Caption = 'Generar desde XML'
+    Caption = 'Cargar desde XML'
     TabOrder = 4
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 648
-    Top = 504
+    Left = 488
+    Top = 392
     Width = 75
     Height = 25
     Caption = 'Button3'
     TabOrder = 5
     OnClick = Button3Click
+  end
+  object Button4: TButton
+    Left = 680
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'Button4'
+    TabOrder = 6
+    OnClick = Button4Click
+  end
+  object sedXML2: TSynEdit
+    Left = 664
+    Top = 376
+    Width = 633
+    Height = 289
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Style = []
+    TabOrder = 7
+    Gutter.Font.Charset = DEFAULT_CHARSET
+    Gutter.Font.Color = clWindowText
+    Gutter.Font.Height = -11
+    Gutter.Font.Name = 'Courier New'
+    Gutter.Font.Style = []
+    Highlighter = SynXMLSyn1
+    FontSmoothing = fsmNone
   end
   object odsCompras: TOracleDataSet
     SQL.Strings = (

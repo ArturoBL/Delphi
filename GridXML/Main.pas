@@ -52,9 +52,12 @@ type
     cxGrid2: TcxGrid;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
+    sedXML2: TSynEdit;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -110,6 +113,11 @@ var
           c.Attributes['Fieldname'] := TcxGridDBTableView(gview).Columns[i].DataBinding.FieldName;
           c.Attributes['Caption'] := TcxGridDBTableView(gview).Columns[i].Caption;
           c.Attributes['Index'] := TcxGridDBTableView(gview).Columns[i].Index;
+          c.Attributes['Width'] := TcxGridDBTableView(gview).Columns[i].Width;
+          if TcxGridDBTableView(gview).Columns[i].GroupIndex >= 0 then
+            c.Attributes['GroupIndex'] := TcxGridDBTableView(gview).Columns[i].GroupIndex;
+          if TcxGridDBTableView(gview).Columns[i].Visible = false then
+            c.Attributes['Visible'] := 'N';
         end;
       end;
     end;
@@ -184,7 +192,33 @@ var
     i : Integer;
     cs, c : IXMLNode;
     acolumn : TcxGridDBColumn;
+    gl : array of record Ci,gi : Integer; end;
+
+    procedure addgi(pci,pgi : Integer);
+    var
+      i,ix : integer;
+
+    begin
+      //encontrar indice
+      ix := 0;
+      for i := 0 to high(gl) do
+        if gl[i].gi > pgi then
+        begin
+          ix := i;
+          Break;
+        end;
+
+      //agregamos espacio
+      SetLength(gl,High(gl) + 2);
+      //recorremos los elementos posteriores
+      for i := ix + 1 to high(gl) do
+        gl[i] := gl[i - 1];
+      //asignamos el nuevo elemento
+      gl[ix].Ci := pci;
+      gl[ix].gi := pgi;
+    end;
   begin
+    SetLength(gl,0);
     with TcxGridDBTableView(pview) do
     begin
       cs := pViewNode.ChildNodes.FindNode('Columns');
@@ -194,10 +228,18 @@ var
         acolumn := GetColumnByFieldName(c.Attributes['Fieldname']);
         if (acolumn <> nil) then
         begin
-          acolumn.Index := strtoint(c.Attributes['Index']);
-          acolumn.Caption := c.Attributes['Caption']
+          acolumn.Index := integer(c.Attributes['Index']);
+          acolumn.Caption := c.Attributes['Caption'];
+          acolumn.Width := integer(c.Attributes['Width']);
+          if (c.HasAttribute('Visible')) then
+            acolumn.Visible := c.Attributes['Visible'] = 'S';
+          if (c.HasAttribute('GroupIndex')) then
+            addgi(acolumn.Index,c.Attributes['GroupIndex']);
         end;
       end;
+      //Agrupamos en orden
+      for i := 0 to high(gl) do
+        Columns[gl[i].Ci].GroupIndex := gl[i].gi;
     end;
   end;
 
@@ -225,6 +267,7 @@ end;
 procedure TfrmMain.Button1Click(Sender: TObject);
 begin
   sedXML.Lines.Text := Grid2XML(cxGrid1);
+  sedXML2.Lines.Text := Grid2XML(cxGrid1);
 end;
 
 procedure TfrmMain.Button2Click(Sender: TObject);
@@ -236,13 +279,26 @@ procedure TfrmMain.Button3Click(Sender: TObject);
 var
   acolumn : TcxGridDBColumn;
   i : Integer;
+  //sortOrder : TdxSortOrder;
 begin
 
-  ShowMessage(TVCompras.Columns[3].DataBinding.FieldName);
+  //ShowMessage(TVCompras.Columns[3].DataBinding.FieldName);
   //ShowMessage(IntToStr(tvcompras.ColumnCount));
 
-//  acolumn := cxGrid2DBTableView1.GetColumnByFieldName('NOMBRE');
+  acolumn := cxGrid2DBTableView1.GetColumnByFieldName('NOMBRE');
+  acolumn.GroupIndex := 0;
+  acolumn := cxGrid2DBTableView1.GetColumnByFieldName('LUGAR_ENTREGA');
+  acolumn.GroupIndex := 1;
 //  acolumn.Index := 0;
+end;
+
+procedure TfrmMain.Button4Click(Sender: TObject);
+var
+  acolumn : TcxGridDBColumn;
+begin
+  //TVCompras.Columns[2].Hidden := True;
+  acolumn := tvcompras.GetColumnByFieldName('nombre');
+  acolumn.Visible := false;
 end;
 
 end.
