@@ -3,7 +3,7 @@ unit Main;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, dxcore,
   XMLDoc, xmldom, XMLIntf, msxmldom,
   Dialogs, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
   cxStyles, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinBlueprint,
@@ -58,6 +58,8 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure TVComprasMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -118,6 +120,11 @@ var
             c.Attributes['GroupIndex'] := TcxGridDBTableView(gview).Columns[i].GroupIndex;
           if TcxGridDBTableView(gview).Columns[i].Visible = false then
             c.Attributes['Visible'] := 'N';
+          if TcxGridDBTableView(gview).Columns[i].SortOrder <> sonone then
+          begin
+            c.Attributes['SortOrder'] := TcxGridDBTableView(gview).Columns[i].SortOrder;
+            c.Attributes['SortIndex'] := TcxGridDBTableView(gview).Columns[i].SortIndex;
+          end;
         end;
       end;
     end;
@@ -188,37 +195,41 @@ var
   end;
 
   procedure configColumns(pViewNode : IXMLNode; pview : TcxCustomGridView);
+  type
+    Tcarr = array of record Ci,gi : Integer; so: TdxSortOrder end;
   var
     i : Integer;
     cs, c : IXMLNode;
     acolumn : TcxGridDBColumn;
-    gl : array of record Ci,gi : Integer; end;
+    gl,sl : Tcarr;
 
-    procedure addgi(pci,pgi : Integer);
+    procedure addgi(var pl: tcarr; pci,pgi : Integer; pso : TdxSortOrder = soNone);
     var
       i,ix : integer;
 
     begin
       //encontrar indice
       ix := 0;
-      for i := 0 to high(gl) do
-        if gl[i].gi > pgi then
+      for i := 0 to high(pl) do
+        if pl[i].gi > pgi then
         begin
           ix := i;
           Break;
         end;
 
       //agregamos espacio
-      SetLength(gl,High(gl) + 2);
+      SetLength(pl,High(pl) + 2);
       //recorremos los elementos posteriores
-      for i := ix + 1 to high(gl) do
-        gl[i] := gl[i - 1];
+      for i := ix + 1 to high(pl) do
+        pl[i] := pl[i - 1];
       //asignamos el nuevo elemento
-      gl[ix].Ci := pci;
-      gl[ix].gi := pgi;
+      pl[ix].Ci := pci;
+      pl[ix].gi := pgi;
+      pl[ix].so := pso;
     end;
   begin
-    SetLength(gl,0);
+    SetLength(gl,0);    //Agrupamiento
+    SetLength(sl,0);    //ordenamiento
     with TcxGridDBTableView(pview) do
     begin
       cs := pViewNode.ChildNodes.FindNode('Columns');
@@ -234,12 +245,21 @@ var
           if (c.HasAttribute('Visible')) then
             acolumn.Visible := c.Attributes['Visible'] = 'S';
           if (c.HasAttribute('GroupIndex')) then
-            addgi(acolumn.Index,c.Attributes['GroupIndex']);
+            addgi(gl, acolumn.Index,c.Attributes['GroupIndex']);
+          if (c.HasAttribute('SortOrder')) then
+            addgi(sl, acolumn.Index,c.Attributes['SortIndex'], c.Attributes['SortOrder']);
+
         end;
       end;
       //Agrupamos en orden
       for i := 0 to high(gl) do
         Columns[gl[i].Ci].GroupIndex := gl[i].gi;
+      //Ordenamos en orden
+      for i := 0 to High(sl) do
+      begin
+        Columns[sl[i].Ci].SortOrder := TdxSortOrder(sl[i].so);
+        Columns[sl[i].Ci].SortIndex := sl[i].gi;
+      end;
     end;
   end;
 
@@ -299,6 +319,41 @@ begin
   //TVCompras.Columns[2].Hidden := True;
   acolumn := tvcompras.GetColumnByFieldName('nombre');
   acolumn.Visible := false;
+end;
+
+procedure TfrmMain.TVComprasMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  AHitTest: TcxCustomGridHitTest;
+  AColumnCaption: String;
+begin
+  if Button = mbRight then
+  begin
+    AHitTest := TcxGridSite(Sender).ViewInfo.GetHitTest(X, Y);
+    if AHitTest is TcxGridRecordCellHitTest then
+    begin
+      //ShowMessage(TcxGridRecordCellHitTest(AHitTest).Item.ClassName);
+      AColumnCaption := TcxGridRecordCellHitTest(AHitTest).Item.Caption;
+      ShowMessage(AColumnCaption);
+    end;
+  end;
+//  if AHitTest is TcxGridColumnHeaderHitTest then
+//  begin
+//
+//    AColumnCaption := TcxGridColumnHeaderHitTest(AHitTest).Column.Caption;
+//    ShowMessage(AColumnCaption);
+//  end;
+//  if AHitTest.HitTestCode = htColumnHeader then
+//  begin
+//  Caption := TcxGridColumnHeaderHitTest(AHitTest).Column.Caption;
+//  ShowMessage(AColumnCaption);
+//  end
+//else
+//  if AHitTest.HitTestCode = htCell then
+//  begin
+//    Caption := TcxGridRecordCellHitTest(AHitTest).Item.Caption;
+//
+//  end;
 end;
 
 end.

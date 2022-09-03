@@ -20,6 +20,7 @@ object frmMain: TfrmMain
     Height = 337
     TabOrder = 0
     object TVCompras: TcxGridDBTableView
+      OnMouseDown = TVComprasMouseDown
       Navigator.Buttons.CustomButtons = <>
       DataController.DataSource = wdsCompras
       DataController.Summary.DefaultGroupSummaryItems = <>
