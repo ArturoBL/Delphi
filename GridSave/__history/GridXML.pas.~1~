@@ -1,0 +1,13 @@
+unit GridXML;
+
+interface
+
+type
+  TGridXML = class
+    private
+    public
+  end;
+
+implementation
+
+end.
