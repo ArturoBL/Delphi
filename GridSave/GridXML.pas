@@ -4,7 +4,7 @@ interface
 
 uses
   cxGridDBTableView, IXMLData, XMLIntf, sysutils
-  , cxCustomData, cxDBData;
+  , cxCustomData, cxDBData, dialogs, DSUnit;
 
 Const
   SummaryKindStrings : array[0..5] of string = ('skNone','skSum','skMin','skMax','skCount','skAverage');
@@ -13,12 +13,13 @@ Const
 type
   TGridXML = class
     private
-      fSQL : string;
+      fSQL, fXML : string;
       fgtv : TcxGridDBTableView;
       function getXML: string;
     public
       property XML : string read getXML;
       constructor create(SQL : string; gtv : TcxGridDBTableView);
+      constructor createFromXML(pXML : string;gtv : TcxGridDBTableView);
   end;
 
 implementation
@@ -29,6 +30,22 @@ constructor TGridXML.create(SQL: string; gtv: TcxGridDBTableView);
 begin
   fsql := sql;
   fgtv := gtv;
+end;
+
+constructor TGridXML.createFromXML(pXML: string; gtv: TcxGridDBTableView);
+var
+  d : tIxmldoc;
+  cols : ixmlnode;
+begin
+  d := tIXMLDoc.CreateFromString(pXML);
+
+  AssignSQL(d.Text('SQL'), gtv.DataController.DataSource.DataSet);
+  gtv.DataController.CreateAllItems;
+
+  cols := d.FindNode('Columns');
+  showmessage(cols.ChildNodes.Count.ToString);
+  //showmessage(gtv.DataController.DataSource.DataSet.ClassName);
+  //showmessage(d.Text('SQL'));
 end;
 
 function TGridXML.getXML: string;
@@ -45,31 +62,62 @@ var
     d.addNode('SQL').Text := fsql;
   end;
 
-  function sumkind(aColumn : tcxgriddbcolumn) : TcxSummaryKind;
+  function sumkind(aColumn : TcxGridDBColumn) : TcxSummaryKind;
   var
     i : integer;
     k : TcxSummaryKind;
-    sit : tcxdatasummaryitem;
-    Item: TcxGridDBTableSummaryItem;
+    col : TcxGridDBColumn;
+    sit : TcxGridDbTableSummaryItem;
+    fn : string;
   begin
     //TcxSummaryKind = (skNone, skSum, skMin, skMax, skCount, skAverage);
     k := skNone;
-    result := k;
-    //fgtv.DataController.Summary.FooterSummaryValues
-    with fgtv.DataController.Summary.FooterSummaryItems do
-    for i := 0 to Count - 1 do
+
+    with fgtv.DataController.Summary do
+    for i := 0 to FooterSummaryItems.Count - 1 do
     begin
-      Item:=TcxGridDBTableSummaryItem(items[i]);
-      if lowercase(item.FieldName) = lowercase(acolumn.DataBinding.FieldName) then
+      sit := TcxGridDbTableSummaryItem(FooterSummaryItems[i]);
+      col := TcxGridDBColumn(sit.Column);
+      if col <> nil then
       begin
-        k := items[i].Kind;
-        break;
+        fn := col.DataBinding.FieldName;
+        if lowercase(fn) = lowercase(acolumn.DataBinding.FieldName) then
+        //if (items[i].DataField.Index = acolumn.DataBinding.Field.Index then
+        begin
+          k := sit.Kind;
+          break;
+        end;
       end;
     end;
+
     result := k;
-//
-//    result := inttostr(ord(k));
   end;
+
+//  function sumkind(aColumn : tcxgriddbcolumn) : TcxSummaryKind;
+//  var
+//    i : integer;
+//    k : TcxSummaryKind;
+//    sit : tcxdatasummaryitem;
+//    Item: TcxGridDBTableSummaryItem;
+//  begin
+//    //TcxSummaryKind = (skNone, skSum, skMin, skMax, skCount, skAverage);
+//    k := skNone;
+//    result := k;
+//    //fgtv.DataController.Summary.FooterSummaryValues
+//    with fgtv.DataController.Summary.FooterSummaryItems do
+//    for i := 0 to Count - 1 do
+//    begin
+//      Item:=TcxGridDBTableSummaryItem(items[i]);
+//      if lowercase(item.FieldName) = lowercase(acolumn.DataBinding.FieldName) then
+//      begin
+//        k := items[i].Kind;
+//        break;
+//      end;
+//    end;
+//    result := k;
+////
+////    result := inttostr(ord(k));
+//  end;
 
   procedure addColumns;
   var

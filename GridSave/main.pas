@@ -44,14 +44,19 @@ type
     btnLoad: TcxButton;
     Button1: TButton;
     cxGridPopupMenu1: TcxGridPopupMenu;
-    gtvid: TcxGridDBColumn;
-    gtvnombre: TcxGridDBColumn;
-    gtvapellido: TcxGridDBColumn;
-    gtvsueldo: TcxGridDBColumn;
-    gtvactivo: TcxGridDBColumn;
+    pum: TPopupMenu;
+    Ocultar1: TMenuItem;
     procedure btnOpenClick(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure gtvCellClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
+    procedure gtvMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure btnLoadClick(Sender: TObject);
+    procedure gtvGenMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -67,11 +72,18 @@ implementation
 
 uses IXMLData, GridXML;
 
+procedure TFormMain.btnLoadClick(Sender: TObject);
+var
+  gx : TGridXML;
+begin
+  gx := TGridXML.createFromXML(sexml.Text,gtvgen);
+end;
+
 procedure TFormMain.btnOpenClick(Sender: TObject);
 begin
-  zconn.LibraryLocation := 'C:\Users\Arturo\OneDrive\Documentos\sqlite-tools-win32-x86-3410100\x86\sqlite3.dll';
+  zconn.LibraryLocation := extractfilepath(application.ExeName) + 'sqlite3.dll';
   zconn.Protocol := 'sqlite-3';
-  zconn.Database := extractfilepath(application.ExeName) + 'empleados.db';
+  zconn.Database := extractfilepath(application.ExeName) + 'employees.db';
   zconn.Connect;
   zq.SQL.Text := sesql.Lines.Text;
   zq.Active := true;
@@ -92,6 +104,41 @@ begin
   gx := tgridxml.create(sesql.Text, gtv);
   sexml.Text := gx.XML;
 //  gtv.DataController.Summary.FooterSummaryItems
+end;
+
+procedure TFormMain.gtvCellClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+var
+  f : TcxFilterCriteriaItemList;
+begin
+  //showmessage(TcxGridDBColumn(ACellViewInfo.Item).DataBinding.FieldName);
+end;
+
+procedure TFormMain.gtvGenMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  showmessage(TcxGridLevel(TcxGridDBTableView(sender).Level).Name);
+
+//  showmessage(TcxGridLevel(TcxGridDBTableView(sender).Level).Control.ClassName);
+//  pum.Popup(x,y);
+end;
+
+procedure TFormMain.gtvMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  AHitTest: TcxCustomGridHitTest;
+  AColumnCaption: String;
+
+begin
+//  AHitTest := TcxGridSite(Sender).ViewInfo.GetHitTest(X, Y);
+//  if AHitTest.HitTestCode = htColumnHeader then
+//  AColumnCaption := TcxGridColumnHeaderHitTest(AHitTest).Column.Caption
+//else
+//  if AHitTest.HitTestCode = htCell then
+//    AColumnCaption := TcxGridRecordCellHitTest(AHitTest).Item.Caption;
+//  showmessage(AColumnCaption);
+
 end;
 
 end.

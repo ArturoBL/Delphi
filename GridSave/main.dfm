@@ -20,12 +20,8 @@ object FormMain: TFormMain
     Height = 416
     Align = alClient
     TabOrder = 0
-    Properties.ActivePage = tsGrid
+    Properties.ActivePage = tsGenGrid
     Properties.CustomButtons.Buttons = <>
-    ExplicitLeft = 8
-    ExplicitTop = 16
-    ExplicitWidth = 745
-    ExplicitHeight = 377
     ClientRectBottom = 412
     ClientRectLeft = 4
     ClientRectRight = 791
@@ -33,8 +29,6 @@ object FormMain: TFormMain
     object tsSQL: TcxTabSheet
       Caption = 'SQL'
       ImageIndex = 0
-      ExplicitWidth = 281
-      ExplicitHeight = 165
       object seSQL: TSynEdit
         Left = 0
         Top = 0
@@ -47,14 +41,6 @@ object FormMain: TFormMain
         Font.Name = 'Courier New'
         Font.Style = []
         TabOrder = 0
-        CodeFolding.GutterShapeSize = 11
-        CodeFolding.CollapsedLineColor = clGrayText
-        CodeFolding.FolderBarLinesColor = clGrayText
-        CodeFolding.IndentGuidesColor = clGray
-        CodeFolding.IndentGuides = True
-        CodeFolding.ShowCollapsedLine = False
-        CodeFolding.ShowHintMark = True
-        UseCodeFolding = False
         Gutter.Font.Charset = DEFAULT_CHARSET
         Gutter.Font.Color = clWindowText
         Gutter.Font.Height = -11
@@ -65,17 +51,11 @@ object FormMain: TFormMain
           'select *'
           '  from employees')
         FontSmoothing = fsmNone
-        ExplicitLeft = 48
-        ExplicitTop = 32
-        ExplicitWidth = 200
-        ExplicitHeight = 150
       end
     end
     object tsGrid: TcxTabSheet
       Caption = 'Grid'
       ImageIndex = 1
-      ExplicitLeft = 5
-      ExplicitTop = 25
       object PanelMain: TPanel
         Left = 0
         Top = 0
@@ -83,9 +63,6 @@ object FormMain: TFormMain
         Height = 41
         Align = alTop
         TabOrder = 0
-        ExplicitLeft = 104
-        ExplicitTop = 48
-        ExplicitWidth = 185
         object btnOpen: TcxButton
           Left = 16
           Top = 10
@@ -112,38 +89,20 @@ object FormMain: TFormMain
         Height = 347
         Align = alClient
         TabOrder = 1
-        ExplicitLeft = 152
-        ExplicitTop = 64
-        ExplicitWidth = 250
-        ExplicitHeight = 200
         object gtv: TcxGridDBTableView
+          OnMouseDown = gtvMouseDown
           Navigator.Buttons.CustomButtons = <>
           ScrollbarAnnotations.CustomAnnotations = <>
+          OnCellClick = gtvCellClick
           DataController.DataSource = ds
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <
             item
               Kind = skMax
               FieldName = 'id'
-              Column = gtvid
             end>
           DataController.Summary.SummaryGroups = <>
           OptionsView.Footer = True
-          object gtvid: TcxGridDBColumn
-            DataBinding.FieldName = 'id'
-          end
-          object gtvnombre: TcxGridDBColumn
-            DataBinding.FieldName = 'nombre'
-          end
-          object gtvapellido: TcxGridDBColumn
-            DataBinding.FieldName = 'apellido'
-          end
-          object gtvsueldo: TcxGridDBColumn
-            DataBinding.FieldName = 'sueldo'
-          end
-          object gtvactivo: TcxGridDBColumn
-            DataBinding.FieldName = 'activo'
-          end
         end
         object glv: TcxGridLevel
           GridView = gtv
@@ -153,8 +112,6 @@ object FormMain: TFormMain
     object tsXML: TcxTabSheet
       Caption = 'XML'
       ImageIndex = 2
-      ExplicitLeft = 5
-      ExplicitTop = 25
       object Panel: TPanel
         Left = 0
         Top = 0
@@ -162,9 +119,6 @@ object FormMain: TFormMain
         Height = 41
         Align = alTop
         TabOrder = 0
-        ExplicitLeft = 144
-        ExplicitTop = 72
-        ExplicitWidth = 185
         object cxButton1: TcxButton
           Left = 16
           Top = 10
@@ -187,14 +141,6 @@ object FormMain: TFormMain
         Font.Name = 'Courier New'
         Font.Style = []
         TabOrder = 1
-        CodeFolding.GutterShapeSize = 11
-        CodeFolding.CollapsedLineColor = clGrayText
-        CodeFolding.FolderBarLinesColor = clGrayText
-        CodeFolding.IndentGuidesColor = clGray
-        CodeFolding.IndentGuides = True
-        CodeFolding.ShowCollapsedLine = False
-        CodeFolding.ShowHintMark = True
-        UseCodeFolding = False
         Gutter.Font.Charset = DEFAULT_CHARSET
         Gutter.Font.Color = clWindowText
         Gutter.Font.Height = -11
@@ -202,14 +148,11 @@ object FormMain: TFormMain
         Gutter.Font.Style = []
         Highlighter = SynSQLSyn
         FontSmoothing = fsmNone
-        ExplicitTop = 39
       end
     end
     object tsGenGrid: TcxTabSheet
       Caption = 'Generated Grid'
       ImageIndex = 3
-      ExplicitLeft = 3
-      ExplicitTop = 25
       object grdGen: TcxGrid
         Left = 0
         Top = 41
@@ -217,13 +160,11 @@ object FormMain: TFormMain
         Height = 347
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 144
-        ExplicitTop = 64
-        ExplicitWidth = 250
-        ExplicitHeight = 200
         object gtvGen: TcxGridDBTableView
+          OnMouseDown = gtvGenMouseDown
           Navigator.Buttons.CustomButtons = <>
           ScrollbarAnnotations.CustomAnnotations = <>
+          DataController.DataSource = ds2
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
@@ -239,16 +180,14 @@ object FormMain: TFormMain
         Height = 41
         Align = alTop
         TabOrder = 1
-        ExplicitLeft = 216
-        ExplicitTop = 56
-        ExplicitWidth = 185
         object btnLoad: TcxButton
           Left = 24
-          Top = 8
+          Top = 10
           Width = 97
           Height = 25
           Caption = 'Load From XML'
           TabOrder = 0
+          OnClick = btnLoadClick
         end
       end
     end
@@ -273,24 +212,22 @@ object FormMain: TFormMain
     Catalog = ''
     Properties.Strings = (
       'controls_cp=CP_UTF16')
-    Connected = True
     HostName = ''
     Port = 0
     Database = 
-      'C:\Users\Arturo\OneDrive\Documentos\Proyectos\Repos\Delphi\GridS' +
-      'ave\Win32\Debug\employees.db'
+      'D:\Progra\Proyectos\Github\Delphi\GridSave\Win32\Debug\employees' +
+      '.db'
     User = ''
     Password = ''
     Protocol = 'sqlite-3'
     LibraryLocation = 
-      'C:\Users\Arturo\OneDrive\Documentos\sqlite-tools-win32-x86-34101' +
-      '00\x86\sqlite3.dll'
+      'C:\Users\artyb\Documents\SQLite\sqlite-dll-win32-x86-3410100\sql' +
+      'ite3.dll'
     Left = 268
     Top = 152
   end
   object zq: TZQuery
     Connection = ZConn
-    Active = True
     SQL.Strings = (
       'select *'
       '  from employees')
@@ -310,6 +247,7 @@ object FormMain: TFormMain
     Top = 216
   end
   object ds2: TDataSource
+    DataSet = zq2
     Left = 364
     Top = 272
   end
@@ -318,5 +256,12 @@ object FormMain: TFormMain
     PopupMenus = <>
     Left = 476
     Top = 328
+  end
+  object pum: TPopupMenu
+    Left = 428
+    Top = 184
+    object Ocultar1: TMenuItem
+      Caption = 'Ocultar'
+    end
   end
 end

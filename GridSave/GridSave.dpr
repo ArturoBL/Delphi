@@ -4,7 +4,8 @@ uses
   Vcl.Forms,
   main in 'main.pas' {FormMain},
   IXMLData in '..\IXMLData.pas',
-  GridXML in 'GridXML.pas';
+  GridXML in 'GridXML.pas',
+  DSUnit in 'DSUnit.pas';
 
 {$R *.res}
 
